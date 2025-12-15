@@ -1,0 +1,8 @@
+.env
+*.env
+backend/.env
+backend/data.sqlite
+backend/database.sqlite
+node_modules/
+.vercel/
+*.log
