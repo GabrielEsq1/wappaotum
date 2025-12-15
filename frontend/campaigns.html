@@ -7,26 +7,10 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <nav class="sidebar">
-      <a href="dashboard.html">Dashboard</a>
-      <a href="users.html">Usuarios</a>
-      <a href="campaigns.html" class="active">Campañas</a>
-      <a href="inbox.html">Inbox</a>
-    </nav>
-    <main>
-      <h1>Campañas</h1>
-      <section>
-        <input id="campaign-name" placeholder="Nombre" />
-        <input id="campaign-template" placeholder="Template" />
-        <input id="campaign-status" placeholder="Estado" value="registered_not_active" />
-        <input id="campaign-tags" placeholder="Tags" />
-        <button id="btn-create-campaign">Crear</button>
-      </section>
-      <section>
-        <input id="campaign-id" placeholder="ID campaña" />
-        <button id="btn-send-campaign">Enviar campaña</button>
-      </section>
-    </main>
-    <script src="app.js"></script>
+    <div id="root"></div>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel" src="ui.js"></script>
   </body>
   </html>

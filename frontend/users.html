@@ -7,30 +7,10 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <nav class="sidebar">
-      <a href="dashboard.html">Dashboard</a>
-      <a href="users.html" class="active">Usuarios</a>
-      <a href="campaigns.html">Campañas</a>
-      <a href="inbox.html">Inbox</a>
-    </nav>
-    <main>
-      <h1>Usuarios</h1>
-      <section>
-        <h2>Importar JSON</h2>
-        <textarea id="json-input" rows="8" placeholder='[{"name":"Juan","phone":"57300...","optin":true,"tags":"vip","status":"registered"}]'></textarea>
-        <button id="btn-import-json">Importar JSON</button>
-      </section>
-      <section>
-        <h2>Importar CSV</h2>
-        <input type="file" id="csv-file" accept=".csv" />
-        <small>Cabeceras: name,phone,email,optin,tags,status</small>
-        <button id="btn-import-csv">Importar CSV</button>
-      </section>
-      <section>
-        <h2>Lista</h2>
-        <table id="users-table"></table>
-      </section>
-    </main>
-    <script src="app.js"></script>
+    <div id="root"></div>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel" src="ui.js"></script>
   </body>
   </html>

@@ -7,20 +7,10 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <nav class="sidebar">
-      <a href="dashboard.html" class="active">Dashboard</a>
-      <a href="users.html">Usuarios</a>
-      <a href="campaigns.html">Campañas</a>
-      <a href="inbox.html">Inbox</a>
-    </nav>
-    <main>
-      <h1>Dashboard</h1>
-      <div class="cards">
-        <div class="card"><div class="label">Total contactos</div><div id="stat-users" class="value">0</div></div>
-        <div class="card"><div class="label">Campañas activas</div><div id="stat-campaigns" class="value">0</div></div>
-        <div class="card"><div class="label">Conversaciones abiertas</div><div id="stat-conv" class="value">0</div></div>
-      </div>
-    </main>
-    <script src="app.js"></script>
+    <div id="root"></div>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel" src="ui.js"></script>
   </body>
   </html>
