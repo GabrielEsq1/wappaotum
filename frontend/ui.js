@@ -1,4 +1,5 @@
 const API = (typeof location !== 'undefined') ? `${location.origin}/api` : 'http://localhost:3000';
+const h = React.createElement;
 
 function useFetch(url, deps = []) {
   const [data, setData] = React.useState(null);
@@ -7,47 +8,45 @@ function useFetch(url, deps = []) {
   React.useEffect(() => {
     let mounted = true;
     setLoading(true);
-    fetch(url).then(r => r.json()).then(j => { if (mounted) { setData(j); setLoading(false); } }).catch(e => { if (mounted) { setError(e); setLoading(false); } });
+    fetch(url)
+      .then(r => r.json())
+      .then(j => { if (mounted) { setData(j); setLoading(false); } })
+      .catch(e => { if (mounted) { setError(e); setLoading(false); } });
     return () => { mounted = false; };
   }, deps);
   return { data, loading, error };
 }
 
-function Sidebar({ active }) {
-  return (
-    <nav className="sidebar">
-      <a href="/dashboard" className={active === 'dashboard' ? 'active' : ''}>Dashboard</a>
-      <a href="/users" className={active === 'users' ? 'active' : ''}>Usuarios</a>
-      <a href="/campaigns" className={active === 'campaigns' ? 'active' : ''}>Campañas</a>
-      <a href="/inbox" className={active === 'inbox' ? 'active' : ''}>Inbox</a>
-    </nav>
-  );
+function Sidebar(props) {
+  const active = props.active;
+  return h('nav', { className: 'sidebar' }, [
+    h('a', { href: '/dashboard', className: active === 'dashboard' ? 'active' : '' }, 'Dashboard'),
+    h('a', { href: '/users', className: active === 'users' ? 'active' : '' }, 'Usuarios'),
+    h('a', { href: '/campaigns', className: active === 'campaigns' ? 'active' : '' }, 'Campañas'),
+    h('a', { href: '/inbox', className: active === 'inbox' ? 'active' : '' }, 'Inbox')
+  ]);
 }
 
-function Card({ label, value }) {
-  return (
-    <div className="card">
-      <div className="label">{label}</div>
-      <div className="value">{value ?? 0}</div>
-    </div>
-  );
+function Card(props) {
+  return h('div', { className: 'card' }, [
+    h('div', { className: 'label' }, props.label),
+    h('div', { className: 'value' }, props.value ?? 0)
+  ]);
 }
 
 function Dashboard() {
   const { data } = useFetch(`${API}/stats`, []);
-  return (
-    <div className="page">
-      <Sidebar active="dashboard" />
-      <main>
-        <h1>Dashboard</h1>
-        <div className="cards">
-          <Card label="Total contactos" value={data?.users} />
-          <Card label="Campañas activas" value={data?.active_campaigns} />
-          <Card label="Conversaciones abiertas" value={data?.open_conversations} />
-        </div>
-      </main>
-    </div>
-  );
+  return h('div', { className: 'page' }, [
+    h(Sidebar, { active: 'dashboard' }),
+    h('main', null, [
+      h('h1', null, 'Dashboard'),
+      h('div', { className: 'cards' }, [
+        h(Card, { label: 'Total contactos', value: data?.users }),
+        h(Card, { label: 'Campañas activas', value: data?.active_campaigns }),
+        h(Card, { label: 'Conversaciones abiertas', value: data?.open_conversations })
+      ])
+    ])
+  ]);
 }
 
 function Users() {
@@ -70,40 +69,38 @@ function Users() {
     location.reload();
   }
 
-  return (
-    <div className="page">
-      <Sidebar active="users" />
-      <main>
-        <h1>Usuarios</h1>
-        <section className="panel">
-          <h2>Importar JSON</h2>
-          <textarea rows={8} value={jsonText} onChange={e => setJsonText(e.target.value)} placeholder='[{"name":"Juan","phone":"57300...","optin":true,"tags":"vip","status":"registered"}]' />
-          <button onClick={importJSON}>Importar JSON</button>
-        </section>
-        <section className="panel">
-          <h2>Importar CSV</h2>
-          <input type="file" accept=".csv" onChange={e => setCsvFile(e.target.files?.[0] || null)} />
-          <small>Cabeceras: name,phone,email,optin,tags,status</small>
-          <button onClick={importCSV}>Importar CSV</button>
-        </section>
-        <section className="panel">
-          <h2>Lista</h2>
-          {loading ? 'Cargando...' : (
-            <table>
-              <thead>
-                <tr><th>Nombre</th><th>Teléfono</th><th>Opt-in</th><th>Tags</th><th>Estado</th></tr>
-              </thead>
-              <tbody>
-                {(users || []).map(u => (
-                  <tr key={u.id}><td>{u.name}</td><td>{u.phone}</td><td>{u.optin ? 'opt-in' : 'opt-out'}</td><td>{u.tags || ''}</td><td>{u.status || ''}</td></tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </section>
-      </main>
-    </div>
-  );
+  const tableRows = (users || []).map(u => h('tr', { key: u.id }, [
+    h('td', null, u.name),
+    h('td', null, u.phone),
+    h('td', null, u.optin ? 'opt-in' : 'opt-out'),
+    h('td', null, u.tags || ''),
+    h('td', null, u.status || '')
+  ]));
+
+  return h('div', { className: 'page' }, [
+    h(Sidebar, { active: 'users' }),
+    h('main', null, [
+      h('h1', null, 'Usuarios'),
+      h('section', { className: 'panel' }, [
+        h('h2', null, 'Importar JSON'),
+        h('textarea', { rows: 8, value: jsonText, onChange: e => setJsonText(e.target.value), placeholder: '[{"name":"Juan","phone":"57300...","optin":true,"tags":"vip","status":"registered"}]' }),
+        h('button', { onClick: importJSON }, 'Importar JSON')
+      ]),
+      h('section', { className: 'panel' }, [
+        h('h2', null, 'Importar CSV'),
+        h('input', { type: 'file', accept: '.csv', onChange: e => setCsvFile(e.target.files?.[0] || null) }),
+        h('small', null, 'Cabeceras: name,phone,email,optin,tags,status'),
+        h('button', { onClick: importCSV }, 'Importar CSV')
+      ]),
+      h('section', { className: 'panel' }, [
+        h('h2', null, 'Lista'),
+        loading ? 'Cargando...' : h('table', null, [
+          h('thead', null, h('tr', null, [h('th', null, 'Nombre'), h('th', null, 'Teléfono'), h('th', null, 'Opt-in'), h('th', null, 'Tags'), h('th', null, 'Estado')])),
+          h('tbody', null, tableRows)
+        ])
+      ])
+    ])
+  ]);
 }
 
 function Campaigns() {
@@ -127,60 +124,50 @@ function Campaigns() {
     await fetch(`${API}/campaigns/${campaignId}/send`, { method: 'POST' });
   }
 
-  return (
-    <div className="page">
-      <Sidebar active="campaigns" />
-      <main>
-        <h1>Campañas</h1>
-        <section className="panel">
-          <input placeholder="Nombre" value={name} onChange={e => setName(e.target.value)} />
-          <input placeholder="Template" value={template} onChange={e => setTemplate(e.target.value)} />
-          <input placeholder="Estado" value={status} onChange={e => setStatus(e.target.value)} />
-          <input placeholder="Tags" value={tags} onChange={e => setTags(e.target.value)} />
-          <button onClick={createCampaign}>Crear</button>
-        </section>
-        <section className="panel">
-          <input placeholder="ID campaña" value={campaignId} onChange={e => setCampaignId(e.target.value)} />
-          <button onClick={sendCampaign}>Enviar campaña</button>
-        </section>
-      </main>
-    </div>
-  );
+  return h('div', { className: 'page' }, [
+    h(Sidebar, { active: 'campaigns' }),
+    h('main', null, [
+      h('h1', null, 'Campañas'),
+      h('section', { className: 'panel' }, [
+        h('input', { placeholder: 'Nombre', value: name, onChange: e => setName(e.target.value) }),
+        h('input', { placeholder: 'Template', value: template, onChange: e => setTemplate(e.target.value) }),
+        h('input', { placeholder: 'Estado', value: status, onChange: e => setStatus(e.target.value) }),
+        h('input', { placeholder: 'Tags', value: tags, onChange: e => setTags(e.target.value) }),
+        h('button', { onClick: createCampaign }, 'Crear')
+      ]),
+      h('section', { className: 'panel' }, [
+        h('input', { placeholder: 'ID campaña', value: campaignId, onChange: e => setCampaignId(e.target.value) }),
+        h('button', { onClick: sendCampaign }, 'Enviar campaña')
+      ])
+    ])
+  ]);
 }
 
 function Inbox() {
   const { data: rows, loading } = useFetch(`${API}/inbox?limit=100`, []);
-  return (
-    <div className="page">
-      <Sidebar active="inbox" />
-      <main>
-        <h1>Inbox</h1>
-        {loading ? 'Cargando...' : (
-          <table>
-            <thead>
-              <tr><th>Nombre</th><th>Teléfono</th><th>Fecha</th><th>Estado</th></tr>
-            </thead>
-            <tbody>
-              {(rows || []).map(r => (
-                <tr key={r.id}><td>{r.name || ''}</td><td>{r.phone || ''}</td><td>{new Date(r.created_at).toLocaleString()}</td><td>{r.status}</td></tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </main>
-    </div>
-  );
+  const table = (rows || []).map(r => h('tr', { key: r.id }, [
+    h('td', null, r.name || ''),
+    h('td', null, r.phone || ''),
+    h('td', null, new Date(r.created_at).toLocaleString()),
+    h('td', null, r.status)
+  ]));
+  return h('div', { className: 'page' }, [
+    h(Sidebar, { active: 'inbox' }),
+    h('main', null, [
+      h('h1', null, 'Inbox'),
+      loading ? 'Cargando...' : h('table', null, [
+        h('thead', null, h('tr', null, [h('th', null, 'Nombre'), h('th', null, 'Teléfono'), h('th', null, 'Fecha'), h('th', null, 'Estado')])),
+        h('tbody', null, table)
+      ])
+    ])
+  ]);
 }
 
 function renderPage() {
   const root = document.getElementById('root');
   const path = location.pathname.replace(/\/$/, '');
-  const el =
-    path === '/users' ? <Users /> :
-    path === '/campaigns' ? <Campaigns /> :
-    path === '/inbox' ? <Inbox /> :
-    <Dashboard />;
-  ReactDOM.createRoot(root).render(el);
+  const component = path === '/users' ? Users : path === '/campaigns' ? Campaigns : path === '/inbox' ? Inbox : Dashboard;
+  ReactDOM.createRoot(root).render(h(component));
 }
 
 renderPage();
